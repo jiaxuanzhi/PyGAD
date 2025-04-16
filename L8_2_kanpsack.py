@@ -1,18 +1,15 @@
-# Import numpy library for array operations
 import numpy as np
 
 def GA_01(population_size, num_generations, mutation_rate, length, calculate_fitness):
     """
     Main Genetic Algorithm function for optimization problems.
     Implements selection, crossover, mutation and population update operations.
-    
     Args:
         population_size: Number of individuals in each generation
         num_generations: Total number of generations to evolve
         mutation_rate: Probability of mutation for each offspring
         length: Length of chromosome (solution representation)
         calculate_fitness: Function to evaluate solution fitness
-    
     Returns:
         tuple: (best_solution, best_fitness) found during evolution
     """
@@ -170,22 +167,6 @@ def selection(population, fitness, tournament_size):
 # ====================================================================
 # Example of solving Knapsack Problem with genetic algorithm (GA).
 # ====================================================================
-values = np.array([1000, 1500, 2000, 2500, 4000])  # Item values
-weights = np.array([1, 2, 2, 3, 4])  # Item weights
-max_weight = 7  # Maximum knapsack capacity
-weight_penalty = 50000  # Penalty for exceeding capacity
-
-# Print problem instance details
-print('### Knapsack Problem Instance Settings:')
-print(f'    Item Values: {values}')
-print(f'    Item Weights: {weights}')
-print(f'    Maximum Weight: {max_weight}')
-
-# GA Parameters
-population_size = 50  # Individuals per generation
-num_generations = 50  # Total generations
-mutation_rate = 0.05  # Mutation probability
-
 def calculate_fitness(population):
     """
     Calculates fitness for knapsack solutions.
@@ -207,6 +188,22 @@ def calculate_fitness(population):
         if total_weight > max_weight:
             fitness[i] -= weight_penalty * (total_weight - max_weight) # Reduce fitness   
     return fitness
+
+values = np.array([1000, 1500, 2000, 2500, 4000])  # Item values
+weights = np.array([1, 2, 2, 3, 4])  # Item weights
+max_weight = 7  # Maximum knapsack capacity
+weight_penalty = 50000  # Penalty for exceeding capacity
+
+# Print problem instance details
+print('### Knapsack Problem Instance Settings:')
+print(f'    Item Values: {values}')
+print(f'    Item Weights: {weights}')
+print(f'    Maximum Weight: {max_weight}')
+
+# GA Parameters
+population_size = 50  # Individuals per generation
+num_generations = 50  # Total generations
+mutation_rate = 0.05  # Mutation probability
 
 # Execute Genetic Algorithm
 best_solution, best_fitness = GA_01(population_size, num_generations, mutation_rate, len(values), calculate_fitness)

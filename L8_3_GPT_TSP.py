@@ -2,58 +2,34 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Define parameters for the waste collection problem
-n_house = 7  # Number of houses
-house_locations = np.array([
-    [100, 100],
-    [100, 350],
-    [300, 400],
-    [400, 100],
-    [500, 600],
-    [600, 300],
-    [700, 500]
-])  # House locations (x, y) coordinates
-house_demands = np.array([100, 200, 300, 100, 200, 300, 400])  # Demands for each house
-depot_location = np.array([0, 0])  # Depot location (x, y)
-capacity = 2000  # Truck capacity
+# Define the coordinates of the cities
+cities = np.array([
+    (1, 1),   # City 1
+    (1, 2),   # City 2
+    (3, 4),   # City 3
+    (4, 2),   # City 4
+    (5, 6),   # City 5
+    (6, 3),   # City 6
+    (7, 5)    # City 7
+])
+# Function to calculate the Euclidean distance between two cities
+def calculate_distance(city1, city2):
+    return np.linalg.norm(city1 - city2)
 
-# Function to calculate the Euclidean distance between two locations
-def calculate_distance(loc1, loc2):
-    return np.linalg.norm(loc1 - loc2)
-
-# Function to evaluate the total distance of the collection route
+# Function to calculate the total distance of the tour
 def evaluate(individual):
-    total_distance = 0
-    current_load = 0
-    current_location = depot_location
-    
+    distance = 0
     for i in range(len(individual)):
-        house_index = individual[i]
-        house_location = house_locations[house_index]
-        
-        # Calculate distance from current location to the next house
-        total_distance += calculate_distance(current_location, house_location)
-        
-        # Update current load and check capacity
-        current_load += house_demands[house_index]
-        if current_load > capacity:
-            # Return to depot and update current load
-            total_distance += calculate_distance(house_location, depot_location)
-            current_load = house_demands[house_index]
-        
-        # Move to the next house
-        current_location = house_location
-    
-    # Return to depot from the last house
-    total_distance += calculate_distance(current_location, depot_location)
-    
-    return total_distance
+        city1 = cities[individual[i % len(individual)]]
+        city2 = cities[individual[(i + 1) % len(individual)]]
+        distance += calculate_distance(city1, city2)
+    return distance
 
 # Initial population generator
-def init_population(pop_size, num_houses):
+def init_population(pop_size, num_cities):
     population = []
     for _ in range(pop_size):
-        individual = list(range(num_houses))
+        individual = list(range(num_cities))
         random.shuffle(individual)
         population.append(individual)
     return population
@@ -74,7 +50,7 @@ def crossover(parent1, parent2):
     child = [item for item in parent2 if item not in child_p1]
     return child[:start] + child_p1 + child[start:]
 
-# Mutate by swapping two houses
+# Mutate by swapping two cities
 def mutate(individual, mutation_rate=0.01):
     if random.random() < mutation_rate:
         i, j = random.sample(range(len(individual)), 2)
@@ -82,9 +58,9 @@ def mutate(individual, mutation_rate=0.01):
     return individual
 
 # Main GA function
-def genetic_algorithm(house_locations, pop_size=100, generations=500, crossover_prob=0.7, mutation_rate=0.01):
-    num_houses = len(house_locations)
-    population = init_population(pop_size, num_houses)
+def genetic_algorithm(cities, pop_size=100, generations=500, crossover_prob=0.7, mutation_rate=0.01):
+    num_cities = len(cities)
+    population = init_population(pop_size, num_cities)
     
     for generation in range(generations):
         # Evaluate fitness
@@ -114,26 +90,25 @@ def genetic_algorithm(house_locations, pop_size=100, generations=500, crossover_
     
     # Get best solution
     best_individual = min(population, key=evaluate)
-    best_route = [depot_location] + [house_locations[i] for i in best_individual] + [depot_location]
+    best_route = [cities[i] for i in best_individual]
+    best_route.append(cities[best_individual[0]])  # Return to the start
     return best_individual, evaluate(best_individual), best_route
 
 # Plot route
 def plot_route(route):
     plt.figure(figsize=(8, 6))
-    plt.plot([loc[0] for loc in route], [loc[1] for loc in route], '-o')
-    plt.title('Waste Collection Route')
+    plt.plot([c[0] for c in route], [c[1] for c in route], '-o')
+    plt.title('Traveling Salesman Route')
     plt.xlabel('X Coordinate')
     plt.ylabel('Y Coordinate')
-    for index, loc in enumerate(route[1:-1], start=1):
-        plt.annotate(f'{index}', (loc[0], loc[1]))
-    plt.scatter(depot_location[0], depot_location[1], color='red', label='Depot')
-    plt.legend()
+    for index, city in enumerate(route[:-1]):
+        plt.annotate(f'{index + 1}', (city[0], city[1]))
     plt.show()
 
 if __name__ == "__main__":
     # Run the genetic algorithm to find the optimal route
-    best_individual, best_distance, best_route = genetic_algorithm(house_locations)
-    print("Best route order: ", best_individual)
+    best_individual, best_distance, best_route = genetic_algorithm(cities)
+    print("Best individual (route order): ", best_individual)
     print("Total distance of best route: ", best_distance)
     
     # Plot the best route found

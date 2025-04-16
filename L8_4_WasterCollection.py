@@ -291,14 +291,15 @@ class GeneticAlgorithmWC:
 
 # ---------------- Example usage below; can be run directly ----------------
 # Waste Collection example: 7 houses, capacity = 1000
-n_house = 7
+n_house = 7 # Number of houses
+# House locations (x, y) coordinates
 house_locations = np.array([
 [100, 100],[100, 350],[300, 400],[400, 100],[500, 600],[600, 300],[700, 500]
 ])
 
-house_demands = np.array([100, 200, 300, 100, 200, 300, 400])
-depot_location = np.array([0, 0])
-capacity = 2000
+house_demands = np.array([100, 200, 300, 100, 200, 300, 400]) # Demands for each house
+depot_location = np.array([0, 0]) # Depot location (x, y)
+capacity = 2000 # Truck capacity
 
 # GA parameters
 population_size = 50

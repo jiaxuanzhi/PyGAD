@@ -124,27 +124,6 @@ def selection(population, fitness, tournament_size):
 # ====================================================================
 # Example of solving Set Cover with genetic algorithm (GA).
 # ====================================================================
-
-# Set cover instance
-universe = {1, 2, 3, 4, 5}  # Universe of elements
-sets = [
-    {1, 2, 3},
-    {2, 4},
-    {3, 4},
-    {4, 5}
-]  # Collection of sets
-
-# Display the instance settings
-print('### Set Cover Problem Instance Settings:')
-print(f'    Item universe: {universe}')
-sets_str = ', '.join([str(s) for s in sets])
-print(f'    Item sets: {sets_str}')
-
-# Parameter settings for GA
-population_size = 50  # population size of GA
-num_generations = 50  # number of generations of GA
-mutation_rate = 0.05  # mutation rate of GA
-
 # Function to calculate the fitness of each individual in the population
 def calculate_fitness(population):
     global sets, universe
@@ -161,6 +140,24 @@ def calculate_fitness(population):
         # Calculate fitness as the number of sets used plus the number of uncovered items
         fitness[i] = -(num_sets_used + penalty)
     return fitness
+# Set cover instance
+universe = {1, 2, 3, 4, 5}  # Universe of elements
+sets = [
+    {1, 2, 3},
+    {2, 4},
+    {3, 4},
+    {4, 5}
+]  # Collection of sets
+# Display the instance settings
+print('### Set Cover Problem Instance Settings:')
+print(f'    Item universe: {universe}')
+sets_str = ', '.join([str(s) for s in sets])
+print(f'    Item sets: {sets_str}')
+
+# Parameter settings for GA
+population_size = 50  # population size of GA
+num_generations = 50  # number of generations of GA
+mutation_rate = 0.05  # mutation rate of GA
 
 # Run the genetic algorithm and obtain the best solution and fitness
 best_solution, best_fitness = GA_01(population_size, num_generations, mutation_rate, len(sets), calculate_fitness)

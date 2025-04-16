@@ -3,14 +3,12 @@ import matplotlib.pyplot as plt
 
 def MOEAD(max_gen, n_subproblems, n_neighbors, mutation_rate):
     """
-    Multi-Objective Evolutionary Algorithm based on Decomposition (MOEA/D).
-    
+    Multi-Objective Evolutionary Algorithm based on Decomposition (MOEA/D).    
     Args:
         max_gen (int): Maximum number of generations.
         n_subproblems (int): Number of subproblems (population size).
         n_neighbors (int): Size of the neighborhood for each subproblem.
-        mutation_rate (float): Probability of mutation for each variable.
-    
+        mutation_rate (float): Probability of mutation for each variable.   
     Returns:
         population (ndarray): Final population of solutions.
         fitness (ndarray): Fitness values of the final population.
@@ -127,11 +125,9 @@ def two_bar_truss_obj(x):
 
 def obj1(x):
     """
-    Compute structural volume (Objective 1).
-    
+    Compute structural volume (Objective 1).   
     Args:
-        x (ndarray): Population of solutions.
-    
+        x (ndarray): Population of solutions.    
     Returns:
         ndarray: Structural volume for each solution.
     """
@@ -154,11 +150,9 @@ def obj2(x):
 
 def const1(x):
     """
-    Constraint 1: Total volume must not exceed 0.1.
-    
+    Constraint 1: Total volume must not exceed 0.1.   
     Args:
-        x (ndarray): Population of solutions.
-    
+        x (ndarray): Population of solutions.    
     Returns:
         ndarray: Constraint violation values.
     """
@@ -166,11 +160,9 @@ def const1(x):
 
 def const2(x):
     """
-    Constraint 2: Stress on AC must not exceed 10^5.
-    
+    Constraint 2: Stress on AC must not exceed 10^5.   
     Args:
-        x (ndarray): Population of solutions.
-    
+        x (ndarray): Population of solutions.    
     Returns:
         ndarray: Constraint violation values.
     """
@@ -178,11 +170,9 @@ def const2(x):
 
 def const3(x):
     """
-    Constraint 3: Stress on BC must not exceed 10^5.
-    
+    Constraint 3: Stress on BC must not exceed 10^5.    
     Args:
-        x (ndarray): Population of solutions.
-    
+        x (ndarray): Population of solutions.   
     Returns:
         ndarray: Constraint violation values.
     """
@@ -204,19 +194,18 @@ def Tchebycheff(fitness, lambda_, ideal):
     """
     return np.max(np.abs(fitness - ideal) * lambda_)  # Weighted Chebyshev distance
 
-if __name__ == "__main__":
-    max_gen = 2500  # Maximum number of generations
-    num_subproblems = 400  # Total number of subproblems (population size)
-    neighbourhood_size = 20  # Size of the neighborhood for each subproblem
-    mutation_rate = 0.2  # Mutation rate for genetic algorithm
+max_gen = 500  # Maximum number of generations
+num_subproblems = 400  # Total number of subproblems (population size)
+neighbourhood_size = 20  # Size of the neighborhood for each subproblem
+mutation_rate = 0.2  # Mutation rate for genetic algorithm
 
-    # Run MOEA/D to solve the two-bar truss problem
-    population, fitness = MOEAD(max_gen, num_subproblems, neighbourhood_size, mutation_rate)
+# Run MOEA/D to solve the two-bar truss problem
+population, fitness = MOEAD(max_gen, num_subproblems, neighbourhood_size, mutation_rate)
 
-    # Display the resulting Pareto front
-    plt.figure()
-    plt.scatter(fitness[:, 0], fitness[:, 1], marker='o')
-    plt.title('Best solutions in the objective space (the approximated Pareto front)')
-    plt.xlabel('f1 * 100')  # First objective scaled by 100
-    plt.ylabel('f2 / 1000')  # Second objective divided by 1000
-    plt.show()
+# Display the resulting Pareto front
+plt.figure()
+plt.scatter(fitness[:, 0], fitness[:, 1], marker='o')
+plt.title('Best solutions in the objective space (the approximated Pareto front)')
+plt.xlabel('f1 * 100')  # First objective scaled by 100
+plt.ylabel('f2 / 1000')  # Second objective divided by 1000
+plt.show()

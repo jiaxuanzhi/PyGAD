@@ -1,14 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def MOEAD(x_min, x_max, dim, max_gen, n_subproblems, n_neighbors, mutation_rate):
+def MOEAD(max_gen, n_subproblems, n_neighbors, mutation_rate):
     """
     Implementation of the MOEA/D algorithm for multi-objective optimization (ZDT1 problem).
 
     Parameters:
-    - x_min: Minimum value for each dimension of the solution
-    - x_max: Maximum value for each dimension of the solution
-    - dim: Number of dimensions of the problem
     - max_gen: Maximum number of generations (iterations)
     - n_subproblems: Number of subproblems (population size)
     - n_neighbors: Size of the neighborhood for each subproblem
@@ -19,6 +16,9 @@ def MOEAD(x_min, x_max, dim, max_gen, n_subproblems, n_neighbors, mutation_rate)
     - fitness: Objective values of the final population
     """
     # Initialize preference vectors (weights) for each subproblem
+    x_min = 0  # Minimum value for each dimension
+    x_max = 1  # Maximum value for each dimension
+    dim = 30  # Number of dimensions
     lambdas = np.zeros((n_subproblems, 2))  # Each row is a weight vector for a subproblem
     lambdas[:, 0] = np.linspace(0, 1, n_subproblems)  # Weight for the first objective
     lambdas[:, 1] = np.linspace(1, 0, n_subproblems)  # Weight for the second objective
@@ -104,16 +104,14 @@ def ZDT1(x):
     return output
 
 # Parameters for the MOEA/D algorithm
-x_min = 0  # Minimum value for each dimension
-x_max = 1  # Maximum value for each dimension
-dim = 30  # Number of dimensions
+
 max_gen = 1000  # Maximum number of generations
 n_subproblems = 100  # Number of subproblems (population size)
 n_neighbors = 20  # Neighborhood size
 mutation_rate = 0.03  # Mutation rate
 
 # Run the MOEA/D algorithm to optimize the ZDT1 problem
-population, fitness = MOEAD(x_min, x_max, dim, max_gen, n_subproblems, n_neighbors, mutation_rate)
+population, fitness = MOEAD(max_gen, n_subproblems, n_neighbors, mutation_rate)
 
 # Plot the approximate Pareto front
 plt.scatter(fitness[:, 0], fitness[:, 1], marker='o')  # Scatter plot of the solutions

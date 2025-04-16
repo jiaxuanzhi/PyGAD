@@ -1,27 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def four_bar_truss_obj(x):
-    """Objective function for the four-bar truss problem.
-    Returns two objectives: total volume (f1) and displacement (f2)."""
-    L = 200  # Length parameter
-    F = 10   # Force parameter
-    E = 2 * 1e5  # Elastic modulus
-    sqrt2 = np.sqrt(2)  # Square root of 2
-    sqrt22 = 2 * sqrt2  # 2 times square root of 2
-    # First objective: total volume of the truss (to be minimized)
-    f1 = L * (2 * x[:, 0] + sqrt2 * x[:, 1] + np.sqrt(x[:, 2]) + x[:, 3])
-    # Second objective: displacement (to be minimized)
-    f2 = F * L / E * (2 / x[:, 0] + sqrt22 / x[:, 1] - sqrt22 / x[:, 2] + 2 / x[:, 3])
-    # Scale f1 for better numerical behavior
-    f1 = f1 / 1e4
-    # Return both objectives as a 2-column array
-    return np.column_stack((f1, f2))
-
-def Tchebycheff(fitness, lambda_, ideal):
-    """Tchebycheff decomposition approach for scalarizing multi-objective problems."""
-    return np.max(np.abs(fitness - ideal) * lambda_)
-
 def MOEAD(max_gen, n_subproblems, n_neighbors, mutation_rate):
     """MOEA/D algorithm for multi-objective optimization."""
     # Initialization
@@ -100,8 +79,28 @@ def MOEAD(max_gen, n_subproblems, n_neighbors, mutation_rate):
         # Print progress
         f_min = np.min(fitness, axis=0)  # current best objectives
         print(f'gen: {gen}, {f_min[0]:.2f}, {f_min[1]:.2f}')
-
     return population, fitness
+
+def four_bar_truss_obj(x):
+    """Objective function for the four-bar truss problem.
+    Returns two objectives: total volume (f1) and displacement (f2)."""
+    L = 200  # Length parameter
+    F = 10   # Force parameter
+    E = 2 * 1e5  # Elastic modulus
+    sqrt2 = np.sqrt(2)  # Square root of 2
+    sqrt22 = 2 * sqrt2  # 2 times square root of 2
+    # First objective: total volume of the truss (to be minimized)
+    f1 = L * (2 * x[:, 0] + sqrt2 * x[:, 1] + np.sqrt(x[:, 2]) + x[:, 3])
+    # Second objective: displacement (to be minimized)
+    f2 = F * L / E * (2 / x[:, 0] + sqrt22 / x[:, 1] - sqrt22 / x[:, 2] + 2 / x[:, 3])
+    # Scale f1 for better numerical behavior
+    f1 = f1 / 1e4
+    # Return both objectives as a 2-column array
+    return np.column_stack((f1, f2))
+
+def Tchebycheff(fitness, lambda_, ideal):
+    """Tchebycheff decomposition approach for scalarizing multi-objective problems."""
+    return np.max(np.abs(fitness - ideal) * lambda_)
 
 # Algorithm parameters
 max_gen = 250  # maximum number of generations
