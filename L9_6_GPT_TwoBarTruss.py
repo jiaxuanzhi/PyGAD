@@ -6,7 +6,7 @@ def MOEAD(max_gen, n_subproblems, n_neighbors, mutation_rate):
     dim = 3  # dimension of the design variable
     
     # Define bounds for each design variable
-    x_min = np.array([1e-5, 1e-5, 1.0])  # lower bounds
+    x_min = np.array([0.01, 0.01, 1.0])  # lower bounds
     x_max = np.array([100.0, 100.0, 3.0])  # upper bounds
 
     # Initialize weight vectors for the subproblems (evenly distributed)
@@ -98,10 +98,10 @@ def tchebycheff(fitness, lambda_, ideal):
     return np.max(np.abs(fitness - ideal) * lambda_)
 
 # Algorithm parameters
-max_gen = 400
-num_subproblems = 200
+max_gen = 500
+num_subproblems = 400
 neighbourhood_size = 20
-mutation_rate = 0.1
+mutation_rate = 0.2
 
 # Run MOEA/D optimization
 population, fitness = MOEAD(max_gen, num_subproblems, neighbourhood_size, mutation_rate)

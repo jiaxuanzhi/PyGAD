@@ -177,10 +177,6 @@ def on_generation(ga_instance):
     fig.canvas.draw()
     fig.canvas.flush_events()
 
-# Define variable range
-max_generations = 300    # Number of generations
-sol_per_pop = 50         # Population size
-num_genes = 4  # Number of variables in the problem
 # Genetic Algorithm Configuration Parameters
 max_generations = 300    # Maximum number of evolutionary generations
 sol_per_pop = 50         # Number of solutions (chromosomes) in each population

@@ -1,17 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Define the new objective functions based on the provided equations
-F = 10  # kN
-sigma = 10  # kN/cm^2
-E = 2 * 10**5  # kN/(cm^2)
-L = 200  # cm
-c = 10**-4
-
-# Define the new problem
-def mop_objective_function(x):
-    f1 = c * L * (2 * x[0] + np.sqrt(2) * x[1] + np.sqrt(x[2]) + x[3])
-    f2 = (F * L) / E * (2 / x[0] + 2 * np.sqrt(2) / x[1] - 2 * np.sqrt(2) / x[2] + 2 / x[3])
+# Define the ZDT1 problem
+def zdt1_objective_function(x):
+    f1 = x[0]
+    g = 1 + 9 / (len(x) - 1) * np.sum(x[1:])
+    f2 = g * (1 - np.sqrt(f1 / g))
     return np.array([f1, f2])
 
 # Generate weight vectors
@@ -23,19 +17,13 @@ def generate_weight_vectors(n_vectors, n_dimensions):
 def tchebycheff(zi, z, weight_vector):
     return np.max(weight_vector * np.abs(zi - z))
 
-# Initialize population within constraints
+# Initialize population
 def initialize_population(pop_size, n_dimensions):
-    x = np.zeros((pop_size, n_dimensions))
-    for i in range(pop_size):
-        x[i, 0] = np.random.uniform(F / sigma, 3 * F / sigma)
-        x[i, 1] = np.random.uniform(np.sqrt(2) * F / sigma, 3 * F / sigma)
-        x[i, 2] = np.random.uniform(np.sqrt(2) * F / sigma, 3 * F / sigma)
-        x[i, 3] = np.random.uniform(F / sigma, 3 * F / sigma)
-    return x
+    return np.random.rand(pop_size, n_dimensions)
 
 # Evaluate population
 def evaluate_population(population):
-    return np.array([mop_objective_function(ind) for ind in population])
+    return np.array([zdt1_objective_function(ind) for ind in population])
 
 # Genetic algorithm operators
 def tournament_selection(population, num_parents):
@@ -63,10 +51,7 @@ def mutation(offspring, mutation_rate):
     for i in range(offspring.shape[0]):
         for j in range(offspring.shape[1]):
             if np.random.rand() < mutation_rate:
-                offspring[i, j] = np.random.uniform(
-                    F / sigma if j == 0 or j == 3 else np.sqrt(2) * F / sigma, 
-                    3 * F / sigma
-                )
+                offspring[i, j] = np.random.rand()
     return offspring
 
 # MOEA/D
@@ -110,9 +95,9 @@ def moea_d(pop_size, n_dimensions, n_generations):
     return population, objectives
 
 # Parameters
-pop_size = 150
-n_dimensions = 4
-n_generations = 600
+pop_size = 100
+n_dimensions = 30
+n_generations = 1000
 
 # Run MOEA/D
 population, objectives = moea_d(pop_size, n_dimensions, n_generations)
@@ -121,5 +106,5 @@ population, objectives = moea_d(pop_size, n_dimensions, n_generations)
 plt.scatter(objectives[:, 0], objectives[:, 1], c='b', marker='o')
 plt.xlabel('f1')
 plt.ylabel('f2')
-plt.title('Pareto Front for MOP')
+plt.title('Pareto Front for ZDT1')
 plt.show()
