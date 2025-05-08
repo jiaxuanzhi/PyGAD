@@ -128,44 +128,72 @@ widths = np.array([1, 1, 2, 2, 3, 3, 4, 4, 5, 5])  # widths of items
 lengths = np.array([1, 1, 2, 2, 3, 3, 4, 4, 5, 5])  # lengths of items
 container_width = 10   # the width of the container
 container_length = 10  # the length of the container
+L = container_length  # Set the length of container (integer)
+W = container_width   # Set the width of container (integer)
+# ====================================================================
+p_w = 1  # Weight penalty for excess weight
+positions = []  # List to store positions of items
 
 def calculate_fitness(population):
-    """
-    Calculates fitness for placement solutions.
-    Evaluates how well the items fit in the container.
-    Args:
-        population: Current population
-    Returns:
-        Array of fitness values
-    """
-    global widths, lengths
-    population_size = population.shape[0]
-    fitness = np.zeros(population_size)
+    global widths, lengths, L, W, p_w, positions
+    population_size = population.shape[0] # Get the population size
+    fitness = np.zeros(population_size) # Initialize the fitness array
     
     for i in range(population_size):
-        layout = population[:, 1]
-        packed_width = np.zeros_like(layout, dtype=int)
-        packed_length = np.zeros_like(layout, dtype=int)
-        used_area = 0
+        selected_items = population[i, :].astype(bool) # Convert to boolean mask
+        selected_widths = widths[selected_items] # Get the widths of selected items
+        selected_lengths = lengths[selected_items] # Get the lengths of selected items
+
+        # Sort the selected items according to the areas (i.e., width * length) in decreasing order
+        areas = selected_widths * selected_lengths # Calculate the areas of selected items
+        sorted_indices = np.argsort(areas)[::-1] # Sort the areas in decreasing order
+        sorted_selected_widths = selected_widths[sorted_indices] # Sort the selected widths
+        sorted_selected_lengths = selected_lengths[sorted_indices] # Sort the selected lengths
+
+        # Load the items one by one into the container, which has a length L and a width W    
+        container = np.zeros((L, W)) # Initialize the container
+        positions = []  # List to store position_start and position_end
         
-        items = [(widths[idx], lengths[idx]) for idx in layout]
-        
-        W_current = 0  # Width in current row
-        L_current = 0  # Length in current row
-        
-        for width, length in items:
-            if W_current + width <= container_width:
-                packed_width[i] = W_current + width
-                packed_length[i] = L_current + length
-                W_current += width
-                used_area += width * length
-            else:
-                W_current = 0
-                L_current += max(lengths[:i+1])
-                
-        fitness[i] = used_area / (container_width * container_length)
-    
+        for j in range(len(sorted_selected_widths)): # Loop through the selected items
+            item_width = sorted_selected_widths[j] # Get the width of the item
+            item_length = sorted_selected_lengths[j] # Get the length of the item
+
+            # Find the position to place the item using first fit and corner point heuristics
+            fit, position_start, position_end = find_position(container, item_width, item_length)
+
+            # If the item fits, place it in the container
+            if fit:
+                container[position_start[0]:position_end[0], position_start[1]:position_end[1]] = 1 # Place the item
+                positions.append([position_start, position_end])  # Store position_start and position_end
+
+        # Get the fitness, the fitness is the loading rate (i.e., total area of loaded items / area of container)
+        loaded_area = np.sum(container) # Calculate the total area of loaded items
+        fitness[i] = loaded_area / (L * W) # Calculate the loading rate
+
+        # Get the penalty, the penalty = p_w * total area of items that have not been loaded
+        unloaded_area = np.sum(areas) - loaded_area # Calculate the total area of items that have not been loaded
+        penalty = p_w * unloaded_area # Calculate the penalty
+        fitness[i] -= penalty # Update the fitness by subtracting the penalty
+
     return fitness
+
+# Function to find the position to place an item into a container using first fit and corner point heuristics
+def find_position(container, item_width, item_length):
+    container_width = container.shape[1] # Get the width of the container
+    container_length = container.shape[0] # Get the length of the container
+    fit = False  # flag indicating if the item fits in the container
+    position_start = [0, 0]  # position to place the item
+    position_end = [0, 0]  # end point of position
+
+    # First fit heuristic
+    for i in range(container_length - item_length + 1): # loop through container rows
+        for j in range(container_width - item_width + 1): # loop through container columns
+            if np.all(container[i:i+item_length, j:j+item_width] == 0): # check if the item fits in the container
+                fit = True # set flag to True
+                position_start = [i, j] # set position to place the item
+                position_end = [i+item_length, j+item_width] # set end point of position
+
+    return fit, position_start, position_end
 
 if __name__ == "__main__":
     # Execute Genetic Algorithm

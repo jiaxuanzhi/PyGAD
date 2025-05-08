@@ -118,17 +118,74 @@ def genetic_algorithm(house_locations, pop_size=100, generations=500, crossover_
     return best_individual, evaluate(best_individual), best_route
 
 # Plot route
-def plot_route(route):
+import matplotlib.pyplot as plt
+import numpy as np
+
+def plot_routes(best_sequence, house_locations, depot_location, house_demands, capacity):
+    """
+    Based on the best (complete) visiting sequence, split the entire route into multiple sub-routes.
+    When the remaining capacity is insufficient to collect the garbage from the next house,
+    the current sub-route is ended by returning to the depot; then a new sub-route starts.
+    Each sub-route is plotted in a different color.
+    """
+    # Split the best sequence into multiple sub-routes
+    sub_routes = []       # List to store multiple sub-routes; each sub-route contains a list of house indices
+    sub_route = [best_sequence[0]]
+    remaining_capacity = capacity - house_demands[best_sequence[0]]
+
+    # Traverse the next houses in the sequence
+    for i in range(len(best_sequence) - 1):
+        current_house = best_sequence[i]
+        next_house = best_sequence[i+1]
+        
+        if house_demands[next_house] > remaining_capacity:
+            # Insufficient capacity for the next house: end the current sub-route by returning to the depot and save it
+            sub_routes.append(sub_route)
+            # Begin a new sub-route starting with the next house
+            sub_route = [next_house]
+            remaining_capacity = capacity - house_demands[next_house]
+        else:
+            # Continue the current sub-route
+            sub_route.append(next_house)
+            remaining_capacity -= house_demands[next_house]
+
+    # Add the last sub-route
+    sub_routes.append(sub_route)
+
+    # Plotting
     plt.figure(figsize=(8, 6))
-    plt.plot([loc[0] for loc in route], [loc[1] for loc in route], '-o')
-    plt.title('Waste Collection Route')
+    plt.title('Waste Collection Routes')
     plt.xlabel('X Coordinate')
     plt.ylabel('Y Coordinate')
-    for index, loc in enumerate(route[1:-1], start=1):
-        plt.annotate(f'{index}', (loc[0], loc[1]))
-    plt.scatter(depot_location[0], depot_location[1], color='red', label='Depot')
+    plt.grid(True)
+
+    # Plot all houses
+    x_all = house_locations[:, 0]
+    y_all = house_locations[:, 1]
+    plt.scatter(x_all, y_all, c='blue', marker='o', s=40, label='House')
+
+    # Plot the depot, here represented by a red square
+    plt.scatter(depot_location[0], depot_location[1], c='red', marker='s', s=100, label='Depot')
+
+    # Annotate each house with its index (optional)
+    for i, (xi, yi) in enumerate(zip(x_all, y_all)):
+        plt.text(xi, yi, str(i), fontsize=10, ha='right')
+
+    # For each sub-route, generate a random color and plot the route
+    for idx, route in enumerate(sub_routes, start=1):
+        # Construct the full route, starting from the depot, visiting the houses, and returning to the depot
+        route_x = [depot_location[0]] + [house_locations[i][0] for i in route] + [depot_location[0]]
+        route_y = [depot_location[1]] + [house_locations[i][1] for i in route] + [depot_location[1]]
+        color = np.random.rand(3,)  # Generate a random color
+        plt.plot(route_x, route_y, color=color, marker='o', linewidth=2, label=f'Route {idx}')
+
     plt.legend()
     plt.show()
+
+    # Output the house indices for each sub-route
+    print("### Sub-routes:")
+    for idx, route in enumerate(sub_routes, start=1):
+        print(f"Route {idx}: {route}")
 
 if __name__ == "__main__":
     # Run the genetic algorithm to find the optimal route
@@ -137,4 +194,5 @@ if __name__ == "__main__":
     print("Total distance of best route: ", best_distance)
     
     # Plot the best route found
-    plot_route(best_route)
+    # plot_route(best_route)
+    plot_routes(best_individual, house_locations, depot_location, house_demands, capacity)

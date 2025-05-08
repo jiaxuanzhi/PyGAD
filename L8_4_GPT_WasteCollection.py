@@ -118,6 +118,9 @@ def genetic_algorithm(house_locations, pop_size=100, generations=500, crossover_
     return best_individual, evaluate(best_individual), best_route
 
 # Plot route
+import matplotlib.pyplot as plt
+import numpy as np
+
 def plot_route(route):
     plt.figure(figsize=(8, 6))
     plt.plot([loc[0] for loc in route], [loc[1] for loc in route], '-o')
@@ -137,4 +140,5 @@ if __name__ == "__main__":
     print("Total distance of best route: ", best_distance)
     
     # Plot the best route found
+    # plot_route(best_route)
     plot_route(best_route)

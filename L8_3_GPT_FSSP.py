@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 # Processing times for each job on each machine
 # T[i][j] -> Time taken by job i on machine j
 processing_times = np.array([
-    [3, 4],  # Job 1
-    [3, 3],  # Job 2
+    [3, 5],  # Job 1
+    [5, 3],  # Job 2
     [4, 1]   # Job 3
 ])
 
