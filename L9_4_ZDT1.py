@@ -105,7 +105,7 @@ def ZDT1(x):
 
 # Parameters for the MOEA/D algorithm
 
-max_gen = 1000  # Maximum number of generations
+max_gen = 300  # Maximum number of generations
 n_subproblems = 100  # Number of subproblems (population size)
 n_neighbors = 20  # Neighborhood size
 mutation_rate = 0.03  # Mutation rate

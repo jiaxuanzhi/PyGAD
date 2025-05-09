@@ -6,7 +6,7 @@ def MOEAD(max_gen, n_subproblems, n_neighbors, mutation_rate):
     dim = 3  # dimension of the design variable
     
     # Define bounds for each design variable
-    x_min = np.array([0.01, 0.01, 1.0])  # lower bounds
+    x_min = np.array([1e-5, 1e-5, 1.0])  # lower bounds
     x_max = np.array([100.0, 100.0, 3.0])  # upper bounds
 
     # Initialize weight vectors for the subproblems (evenly distributed)
@@ -112,7 +112,7 @@ def check_constraints(x):
     return c1 and c2 and c3
 
 # Algorithm parameters
-max_gen = 500
+max_gen = 300
 num_subproblems = 400
 neighbourhood_size = 20
 mutation_rate = 0.2
@@ -122,11 +122,11 @@ population, fitness = MOEAD(max_gen, num_subproblems, neighbourhood_size, mutati
 
 # Plot the results (approximated Pareto front)
 plt.scatter(fitness[:, 0], fitness[:, 1], marker='o')
-plt.title('Approximated Pareto Front for Two-Bar Truss')
+plt.title(f'Approximated Pareto Front for Two-Bar Truss, {max_gen} MaxGeneration ,{num_subproblems} subproblems')
 plt.xlabel('f1 * 100')
 plt.ylabel('f2 / 1000')
 plt.show()
-
+plt.tight_layout()
 # Verify constraints for each solution in the Pareto front
 feasible = []
 infeasible = []

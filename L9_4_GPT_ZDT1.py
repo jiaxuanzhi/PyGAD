@@ -91,6 +91,7 @@ def moea_d(pop_size, n_dimensions, n_generations):
 
         # Update ideal point
         z = np.minimum(z, np.min(offspring_objectives, axis=0))
+        print(f'gen: {gen + 1}, Min Fitness:{z[0]:.2f}, {z[1]:.2f}')
     
     return population, objectives
 

@@ -194,7 +194,7 @@ def Tchebycheff(fitness, lambda_, ideal):
     """
     return np.max(np.abs(fitness - ideal) * lambda_)  # Weighted Chebyshev distance
 
-max_gen = 500  # Maximum number of generations
+max_gen = 300  # Maximum number of generations
 num_subproblems = 400  # Total number of subproblems (population size)
 neighbourhood_size = 20  # Size of the neighborhood for each subproblem
 mutation_rate = 0.2  # Mutation rate for genetic algorithm
