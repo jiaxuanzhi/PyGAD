@@ -106,13 +106,14 @@ def moea_d(pop_size, n_dimensions, n_generations):
 
         # Update ideal point
         z = np.minimum(z, np.min(offspring_objectives, axis=0))
+        print(f'gen: {gen}, {z[0]:.2f}, {z[1]:.2f}')
     
     return population, objectives
 
 # Parameters
 pop_size = 150
 n_dimensions = 4
-n_generations = 600
+n_generations = 200
 
 # Run MOEA/D
 population, objectives = moea_d(pop_size, n_dimensions, n_generations)
